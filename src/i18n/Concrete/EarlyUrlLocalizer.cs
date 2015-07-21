@@ -131,17 +131,21 @@ namespace i18n
                 delegate(Match match)
                 {
                     try {
-                        string url = match.Groups[2].Value;
-                        string urlNew = LocalizeUrl(context, url, langtag, requestUrl, false);
-                        // If URL was not changed...leave matched token alone.
-                        if (urlNew == null) {
+                         //Looking for data-i18n-url-nolocal data tag
+                        var isDataTag = m_regexDataTag.Match(match.Groups["0"].ToString()).Groups["datatag"].Success;
+
+                        var url = match.Groups["url"].Value;
+                        var urlNew = LocalizeUrl(context, url, langtag, requestUrl, false);
+                        // If URL was not changed or data tag data-i18n-url-nolocal found...leave matched token alone.
+                        if (urlNew == null || isDataTag)
+                        {
                             return match.Groups[0].Value; } // original
 
                         // Rebuild and return matched token.
-                        string res = string.Format("{0}{1}{2}", 
-                            match.Groups[1].Value,
-                            urlNew, 
-                            match.Groups[3].Value);
+                        var res = string.Format("{0}{1}{2}",
+                            match.Groups["pre"].Value,
+                            urlNew,
+                            match.Groups["post"].Value);
                         return res;
                     }
                     catch (System.UriFormatException) {
@@ -169,6 +173,14 @@ namespace i18n
                 // \s = whitespace
                 // See also: http://www.w3.org/TR/REC-html40/index/attributes.html
                 // See also: http://www.mikesdotnetting.com/Article/46/CSharp-Regular-Expressions-Cheat-Sheet
+                
+        /// <summary>
+        /// Regex for finding data-i18n-url-nolocal data tag in html.
+        /// Using separated Regex object to find data-i18n-url-nolocal datatag because the main Regex above is already too complex
+        /// </summary>
+        public static Regex m_regexDataTag = new Regex(
+          "(?<pre><(?:script|img|a|area|link|base|input|frame|iframe|form))(?<datatag>.*data-i18n-url-nolocal)",
+          RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
         public static string[] m_httpHeadersContainingUrls = new[] { "Location", "Content-Location" };
 
