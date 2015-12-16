@@ -314,6 +314,22 @@ namespace i18n.Tests
                 "fr",
                 "\r\r\n\n\n\r\n\n\r\t\n\r\t<script\r\r\n\n\n\r\n\n\r\t\n\r\tsrc\r\r\n\n\n\r\n\n\r\t\n\r\t=\r\r\n\n\n\r\n\n\r\t\n\r\t\"123\"\r\r\n\n\n\r\n\n\r\t\n\r\t>\r\r\n\n\n\r\n\n\r\t\n\r\t</script\r\r\n\n\n\r\n\n\r\t\n\r\t>\r\r\n\n\n\r\n\n\r\t\n\r\t",
                 "\r\r\n\n\n\r\n\n\r\t\n\r\t<script\r\r\n\n\n\r\n\n\r\t\n\r\tsrc\r\r\n\n\n\r\n\n\r\t\n\r\t=\r\r\n\n\n\r\n\n\r\t\n\r\t\"/fr/123\"\r\r\n\n\n\r\n\n\r\t\n\r\t>\r\r\n\n\n\r\n\n\r\t\n\r\t</script\r\r\n\n\n\r\n\n\r\t\n\r\t>\r\r\n\n\n\r\n\n\r\t\n\r\t");
+                
+                //Do not patch when data-i18n-url-nolocal data tag set
+            ResponseFilter_can_patch_html_urls(
+                "fr",
+                "<a data-i18n-url-nolocal href=\"myUrl\"></a>",
+                "<a data-i18n-url-nolocal href=\"myUrl\"></a>");
+
+            ResponseFilter_can_patch_html_urls(
+            "fr",
+            "<a\r\ndata-i18n-url-nolocal\r\nhref=\"myUrl\"></a>",
+            "<a\r\ndata-i18n-url-nolocal\r\nhref=\"myUrl\"></a>");
+            
+            ResponseFilter_can_patch_html_urls(
+                "fr",
+                "<a href=\"myUrl\" data-i18n-url-nolocal></a>",
+                "<a href=\"myUrl\" data-i18n-url-nolocal></a>");
         }
         void ResponseFilter_can_patch_html_urls(string suffix, string pre, string expectedPatched, Uri requestUrl = null)
         {
